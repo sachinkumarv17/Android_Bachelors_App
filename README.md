@@ -4,13 +4,15 @@ Android applications that caters to the rental requirements of bachelors.
 SEQUENCE OF PAGES :
 
 Common page -> Sign up -> Register -> Login
-            -> Login -> Dashboard -> Navigation bar
+            -> Login -> Dashboard&Search -> Navigation bar
             
 Navigation bar -> User Profile
-               -> Dashboard
+               -> Dashboard&Search
                -> Chat
                -> Add Property
                -> Wallet
                -> Notifications
                -> Suggestions
-               -> Sign out
+               -> Sign out 
+               
+Sign out -> Login

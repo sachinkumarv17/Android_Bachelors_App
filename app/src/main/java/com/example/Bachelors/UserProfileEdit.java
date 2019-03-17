@@ -1,10 +1,15 @@
 package com.example.Bachelors;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +39,10 @@ public class UserProfileEdit extends AppCompatActivity
     FirebaseUser mUser;
     UserReg userReg;
 
+    private static final String CHANNEL_ID = "Bach";
+    private static final String CHANNEL_NAME = "Bach";
+    private static final String CHANNEL_DESC = "Bach";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +60,7 @@ public class UserProfileEdit extends AppCompatActivity
         firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         databaseUsers = FirebaseDatabase.getInstance().getReference("User");
-
         String id = mUser.getUid();
-        Toast.makeText(UserProfileEdit.this, id, Toast.LENGTH_LONG).show();
-
 
         // retrieve from database here
         databaseUsers.child(id).addValueEventListener(new ValueEventListener() {
@@ -141,6 +147,7 @@ public class UserProfileEdit extends AppCompatActivity
                         databaseUsers.child(id).child("contanct").setValue(phonenoString);
                         databaseUsers.child(id).child("age").setValue(lastnameString);
                         databaseUsers.child(id).child("email").setValue(usernameString);
+                        Toast.makeText(UserProfileEdit.this,"Details updated", Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         Toast.makeText(UserProfileEdit.this, "Unable to update", Toast.LENGTH_LONG).show();
                         //                    e.printStackTrace();
@@ -208,8 +215,8 @@ public class UserProfileEdit extends AppCompatActivity
         switch(id) {
 
             case R.id.nav_add_property :
-//                Intent a = new Intent(AddProperty.this,AddProperty.class);
-//                startActivity(a);
+                Intent a = new Intent(UserProfileEdit.this,AddProperty.class);
+                startActivity(a);
                 break;
             case R.id.nav_chat :
 //                Intent c = new Intent(Dashboard_common.this,Dashboard_common.class);
@@ -222,6 +229,7 @@ public class UserProfileEdit extends AppCompatActivity
             case R.id.nav_notifications :
 //                Intent a = new Intent(Dashboard_common.this,Dashboard_common.class);
 //                startActivity(a);
+                displayNotif();
                 break;
             case R.id.nav_profile :
                 Intent p = new Intent(UserProfileEdit.this, UserProfileEdit.class);
@@ -238,8 +246,26 @@ public class UserProfileEdit extends AppCompatActivity
 
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(CHANNEL_DESC);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void displayNotif() {
+        NotificationCompat.Builder notif_builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        notif_builder.setSmallIcon(R.drawable.ic_notification);
+        notif_builder.setContentTitle("Bachelors: New notification");
+        notif_builder.setContentText("New request for Property.");
+        notif_builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(1, notif_builder.build());
     }
 }

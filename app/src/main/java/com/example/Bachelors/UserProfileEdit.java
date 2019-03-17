@@ -2,6 +2,7 @@ package com.example.Bachelors;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -13,30 +14,67 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 
-public class Dashboard_common extends AppCompatActivity
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ValueEventListener;
+
+public class UserProfileEdit extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    DrawerLayout drawer;                    // new
-    NavigationView navigationView;          // new
-    Toolbar toolbar = null;                 // new
 
+    DatabaseReference databaseUsers;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard_common);
+        setContentView(R.layout.activity_user_profile_edit);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
+        final Button buttonEdit = (Button) findViewById(R.id.buttonEdit);
+        final Button buttonSaveChanges = (Button) findViewById(R.id.buttonSaveChanges);
+        final EditText username = (EditText) findViewById(R.id.editText_username);
+        final EditText firstname = (EditText) findViewById(R.id.editText_first_name);
+        final EditText lastname = (EditText) findViewById(R.id.editText_last_name);
+        final EditText phoneno = (EditText) findViewById(R.id.editText_phone_no);
+        firebaseAuth = FirebaseAuth.getInstance();
+        mUser = firebaseAuth.getCurrentUser();
+        databaseUsers = FirebaseDatabase.getInstance().getReference("userdetails Details");
 
-        //////
+        String id = mUser.getUid();
 
+        // retrieve from database here
+        databaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                UserReg userReg = dataSnapshot.getValue(UserReg.class);
+                System.out.println(userReg);
+                username.setText(userReg.getEmail());
+                firstname.setText(userReg.getName());
+                lastname.setText(userReg.getName());
 
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        /////
+            }
+        });
+
+        username.setText("test@test.com");
+        firstname.setText("Testboi");
+        lastname.setText("1234");
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -47,14 +85,50 @@ public class Dashboard_common extends AppCompatActivity
             }
         });
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);                                   // changed
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);                              // changed
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    username.setInputType(0);
+                    username.setEnabled(false);
+                    phoneno.setInputType(1);
+                    firstname.setInputType(1);
+                    lastname.setInputType(1);
+                    buttonSaveChanges.setVisibility(View.VISIBLE);
+                    buttonEdit.setVisibility(View.INVISIBLE);
+
+    }});
+
+        buttonSaveChanges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String usernameString = username.getText().toString().trim();
+                String firstnameString = firstname.getText().toString().trim();
+                String lastnameString = lastname.getText().toString().trim();
+
+                // check and update database
+
+
+                username.setInputType(0);
+                username.setEnabled(true);
+                phoneno.setInputType(0);
+                firstname.setInputType(0);
+                lastname.setInputType(0);
+                buttonSaveChanges.setVisibility(View.INVISIBLE);
+                buttonEdit.setVisibility(View.VISIBLE);
+
+            }});
+
     }
 
     @Override
@@ -70,7 +144,7 @@ public class Dashboard_common extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.dashboard_common, menu);
+        getMenuInflater().inflate(R.menu.user_profile_edit, menu);
         return true;
     }
 
@@ -106,7 +180,7 @@ public class Dashboard_common extends AppCompatActivity
 //                startActivity(a);
                 break;
             case R.id.nav_dashboard :
-                Intent d = new Intent(Dashboard_common.this,Dashboard_common.class);
+                Intent d = new Intent(this,Dashboard_common.class);
                 startActivity(d);
                 break;
             case R.id.nav_notifications :
@@ -114,7 +188,7 @@ public class Dashboard_common extends AppCompatActivity
 //                startActivity(a);
                 break;
             case R.id.nav_profile :
-                Intent p = new Intent(this, UserProfileEdit.class);
+                Intent p = new Intent(UserProfileEdit.this, UserProfileEdit.class);
                 startActivity(p);
                 break;
             case R.id.nav_sign_out :

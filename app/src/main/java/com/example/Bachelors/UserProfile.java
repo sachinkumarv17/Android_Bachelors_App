@@ -2,198 +2,148 @@ package com.example.Bachelors;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class UserProfile extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
 
-    DatabaseReference databaseUsers;
-    FirebaseAuth firebaseAuth;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+public class UserProfile extends AppCompatActivity implements Serializable {
+
+
+    FirebaseAuth mAuth;
     FirebaseUser mUser;
+    EditText Name;
+    EditText Contact;
+    EditText Email_Id;
+    EditText Address;
+    EditText Age;
+    Spinner spinner;
+    Button addo;
+    UserReg Details;
+
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedInstancesState) {
+        super.onCreate(savedInstancesState);
         setContentView(R.layout.activity_user_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mAuth = FirebaseAuth.getInstance();
+
+        mUser= mAuth.getCurrentUser();
 
 
-        final Button buttonEdit = (Button) findViewById(R.id.buttonEdit);
-        final Button buttonSaveChanges = (Button) findViewById(R.id.buttonSaveChanges);
-        final EditText username = (EditText) findViewById(R.id.editText_username);
-        final EditText firstname = (EditText) findViewById(R.id.editText_first_name);
-        final EditText lastname = (EditText) findViewById(R.id.editText_last_name);
-        final EditText phoneno = (EditText) findViewById(R.id.editText_phone_no);
-        firebaseAuth = FirebaseAuth.getInstance();
-        mUser = firebaseAuth.getCurrentUser();
-        databaseUsers = FirebaseDatabase.getInstance().getReference("userdetails Details");
-
-        // retrieve from database here
-
-        username.setText("test@test.com");
-        firstname.setText("Testboi");
-        lastname.setText("1234");
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //Code for Gender
+        spinner = (Spinner) findViewById(R.id.Gender);
+
+        List<String> list = new ArrayList<>();
+        list.add("Select your gender from below");
+        list.add("Male");
+        list.add("Female");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, list);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                String itemvalue = parent.getItemAtPosition(position).toString();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        //Code for database
+        Name = (EditText) findViewById(R.id.Name);
+        Contact = (EditText) findViewById(R.id.Contact);
+        Email_Id = (EditText) findViewById(R.id.Email_id);
+        Age = (EditText) findViewById(R.id.Age);
+        Address = (EditText) findViewById(R.id.Address);
+        addo = (Button) findViewById(R.id.email_sign_in_button);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
+        addo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                    username.setInputType(0);
-                    username.setEnabled(false);
-                    phoneno.setInputType(1);
-                    firstname.setInputType(1);
-                    lastname.setInputType(1);
-                    buttonSaveChanges.setVisibility(View.VISIBLE);
-                    buttonEdit.setVisibility(View.INVISIBLE);
-
-    }});
-
-        buttonSaveChanges.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String usernameString = username.getText().toString().trim();
-                String firstnameString = firstname.getText().toString().trim();
-                String lastnameString = lastname.getText().toString().trim();
-
-                // check and update database
-
-//                currentUser?.updateEmail(email) { error in
-//                    if let error = error {
-//                        print(error)
-//                    }
-//                    else {
-//                        // Email updated
-//                    }
-//                }
-
-                username.setInputType(0);
-                username.setEnabled(true);
-                phoneno.setInputType(0);
-                firstname.setInputType(0);
-                lastname.setInputType(0);
-                buttonSaveChanges.setVisibility(View.INVISIBLE);
-                buttonEdit.setVisibility(View.VISIBLE);
-
-            }});
+                int check = upload();
+                if(check==1)
+                    startActivity(new Intent (UserProfile.this,DP_Activity.class));
+                else
+                    Toast.makeText(UserProfile.this,"error",Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+    private void addUser() {
+        String User_Name = Name.getText().toString().trim();
+        String User_contanct = Contact.getText().toString().trim();
+        String User_email = Email_Id.getText().toString().trim();
+        String User_age = Age.getText().toString().trim();
+        String User_address = Address.getText().toString().trim();
+        String User_Sex = spinner.getSelectedItem().toString();
+
+        /* String id = Userdata.push().getKey();
+
+        tenantReg tenant = new tenantReg(User_Name, User_Contact, User_email, User_age, User_address, User_sex);
+
+        Userdata.child(Name).setValue(User);*/
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_profile, menu);
-        return true;
-    }
+    public int upload()
+    {
+        Details = new UserReg();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        try {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
-        return super.onOptionsItemSelected(item);
-    }
+            Details.setName(Name.getText().toString());
+            Details.setContanct(Contact.getText().toString());
+            Details.setEmail(Email_Id.getText().toString());
+            Details.setAddress(Address.getText().toString());
+            Details.setAge(Age.getText().toString());
+            Details.setSex(spinner.getSelectedItem().toString().trim());
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        switch(id) {
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference databaseReference = firebaseDatabase.getReference().child("User");
+            //databaseReference.setValue(Details);
+            databaseReference.child(mUser.getUid()).setValue(Details);
 
-            case R.id.nav_add_property :
-//                Intent a = new Intent(AddProperty.this,AddProperty.class);
-//                startActivity(a);
-                break;
-            case R.id.nav_chat :
-//                Intent c = new Intent(Dashboard_common.this,Dashboard_common.class);
-//                startActivity(a);
-                break;
-            case R.id.nav_dashboard :
-                Intent d = new Intent(this,Dashboard_common.class);
-                startActivity(d);
-                break;
-            case R.id.nav_notifications :
-//                Intent a = new Intent(Dashboard_common.this,Dashboard_common.class);
-//                startActivity(a);
-                break;
-            case R.id.nav_profile :
-                Intent p = new Intent(UserProfile.this,UserProfile.class);
-                startActivity(p);
-                break;
-            case R.id.nav_sign_out :
-                Intent l = new Intent(this,LoginActivity.class);
-                startActivity(l);
-                break;
-            case R.id.nav_suggestions :
-//                Intent a = new Intent(Dashboard_common.this,Dashboard_common.class);
-//                startActivity(a);
-                break;
+            //databaseReference.child(mUser.getUid()).push().setValue(Details);
+            //DatabaseReference reg = root.child("Reg");
+            //reg.setValue(Details);
+            return 1;
+
+        }catch (NullPointerException e){
+            return 0;
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-}
+    }}
+

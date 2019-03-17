@@ -1,11 +1,14 @@
 package com.example.Bachelors;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,17 +16,110 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class AddProperty extends AppCompatActivity {
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.Serializable;
+
+
+public class AddProperty extends AppCompatActivity implements Serializable {
+
+
+    EditText Name, location, avl_rooms, Pt;
+    Button AddData;
+    Button viewAll;
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
+    String type;
+
+
+
+    property Details;
+
 
     //DatabaseHelper myDb;
-    EditText editName,editlocation,editAvl_rooms ,editTextPt;
-    Button btnAddData;
-    Button btnviewAll;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_property);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        AddData = (Button) findViewById(R.id.button_addData);
+
+        Name = (EditText) findViewById(R.id.editText_name);
+        location = (EditText) findViewById(R.id.editText_location);
+        avl_rooms = (EditText) findViewById(R.id.editText_rooms);
+        Pt = (EditText) findViewById(R.id.editText_Pt);
+
+        AddData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int check = upload();
+                if (check == 1) {
+                    startActivity(new Intent(AddProperty.this, Dashboard_common.class));
+                }
+
+//               if( getType().compareToIgnoreCase("owner") == 0)
+
+                else {
+                    Toast.makeText(AddProperty.this, "Error", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    public int upload(){
+        Details = new property();
+
+        try {
+
+            //serdetails test = (userdetails) getIntent().getSerializableExtra("type");
+            //Details.setType(test.getType());
+            Details.setName(Name.getText().toString().trim());
+            Details.setLocation(location.getText().toString().trim());
+            Details.setAvl_rooms(avl_rooms.getText().toString().trim());
+            Details.setPt(Pt.getText().toString().trim());
+
+            Toast.makeText(AddProperty.this, Details.getAvl_rooms(), Toast.LENGTH_LONG).show();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("User");
+            String id = mUser.getUid();
+            databaseReference.child(id).push().setValue(Details);
+
+
+            //DatabaseReference reg = root.child("Reg");
+            //reg.setValue(Details);
+            return 1;
+
+
+        } catch (NullPointerException e) {
+            return 0;
+
+
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       /*  myDb = new DatabaseHelper(this);
 
@@ -118,5 +214,34 @@ public class AddProperty extends AppCompatActivity {
 
 
 */
-    }
-}
+
+
+//    private String getType() {
+//        detail = new UserReg();
+//        try {
+//
+//            FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+//            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("User");
+//            DatabaseReference mroot = reference.child(mUser.getUid());
+//            mroot.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    detail = dataSnapshot.getValue(UserReg.class);
+//
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+//
+//
+//
+//            type = detail.getType();
+//            Log.d("type ", detail.getType());
+//
+//        }catch (NullPointerException e){}
+//        return type ;
+//    }
+

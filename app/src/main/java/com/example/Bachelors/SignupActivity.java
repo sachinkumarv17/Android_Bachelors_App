@@ -1,9 +1,12 @@
 package com.example.Bachelors;
 
 import android.content.Intent;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,14 +16,28 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SignupActivity extends AppCompatActivity {
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-    EditText editTextUsername;
+import java.io.Serializable;
+
+public class SignupActivity extends AppCompatActivity implements Serializable {
+
+    EditText editTextusername;
     EditText editTextPassword;
     EditText editTextPassword2;
     Button buttonAdd, buttonOU;
     Spinner sp;
     String s;
+    userdetails details;
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +46,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
         buttonAdd = (Button) findViewById(R.id.buttonAddBachelor);
-        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
+        editTextusername = (EditText) findViewById(R.id.editTextUsername);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         editTextPassword2 = (EditText) findViewById(R.id.editTextPassword2);
         sp = (Spinner) findViewById(R.id.spinnerGenres);
@@ -65,7 +82,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String name = editTextUsername.getText().toString().trim();
+                String name = editTextusername.getText().toString().trim();
                 String password = editTextPassword.getText().toString().trim();
                 String password2 = editTextPassword2.getText().toString().trim();
                 String genre = sp.getSelectedItem().toString();
@@ -73,16 +90,18 @@ public class SignupActivity extends AppCompatActivity {
                 if(!((TextUtils.isEmpty(name))||(TextUtils.isEmpty(password)))){
 
                     if((password).equals(password2)) {
+                        register();
 
-                        if((genre).equals("Tenant")) {
-                            Toast.makeText(SignupActivity.this, "Tenant added", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(v.getContext(), RegistrationTenant.class));
-                        }
 
-                        else {
-                            Toast.makeText(SignupActivity.this, "Owner added", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(v.getContext(), ownerReg.class));
-                        }
+//                        if((genre).equals("Tenant")) {
+////                            Toast.makeText(SignupActivity.this, "Tenant added", Toast.LENGTH_SHORT).show();
+////                            startActivity(new Intent(v.getContext(), RegistrationTenant.class));
+//                        }
+//
+//                        else {
+////                            Toast.makeText(SignupActivity.this, "Owner added", Toast.LENGTH_SHORT).show();
+////                            startActivity(new Intent(v.getContext(), ownerReg.class));
+//                        }
 
 
                     }
@@ -112,6 +131,54 @@ public class SignupActivity extends AppCompatActivity {
                 startActivity(new Intent(v.getContext(), LoginActivity.class));
             }
         });
-        }
     }
+
+    public  void  register()
+    {
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.createUserWithEmailAndPassword(editTextusername.getText().toString().trim(),editTextPassword.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful())
+                { mUser = mAuth.getCurrentUser();
+                    int check= upload_details();
+                    if(check == 1) {
+                        Intent intent = new Intent(SignupActivity.this,UserProfile.class);
+//                        intent.putExtra("type", (Serializable) details);
+                        startActivity(intent);
+                    }
+                }
+                else
+                {
+                    Toast.makeText(SignupActivity.this,"error",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
+    }
+
+    public  int upload_details()
+    {
+        details = new userdetails();
+        try {
+            String temp = editTextusername.getText().toString();
+
+            details.setUsername(temp);
+            String sr = sp.getSelectedItem().toString().trim();
+            details.setType(sr);
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference databaseReference = firebaseDatabase.getReference("User");
+
+
+
+            //DatabaseReference root = databaseReference.child("user");
+            databaseReference.child(mUser.getUid()).push().setValue(details);
+
+            return 1;
+        }catch (NullPointerException e){
+            return 0;
+        }
+
+    }}
 

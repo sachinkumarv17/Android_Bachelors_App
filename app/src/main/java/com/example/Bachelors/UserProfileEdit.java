@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +32,7 @@ public class UserProfileEdit extends AppCompatActivity
     DatabaseReference databaseUsers;
     FirebaseAuth firebaseAuth;
     FirebaseUser mUser;
+    UserReg userReg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,32 +50,44 @@ public class UserProfileEdit extends AppCompatActivity
         final EditText phoneno = (EditText) findViewById(R.id.editText_phone_no);
         firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
-        databaseUsers = FirebaseDatabase.getInstance().getReference("userdetails Details");
+        databaseUsers = FirebaseDatabase.getInstance().getReference("User");
 
         String id = mUser.getUid();
+        Toast.makeText(UserProfileEdit.this, id, Toast.LENGTH_LONG).show();
+
 
         // retrieve from database here
-        databaseUsers.addValueEventListener(new ValueEventListener() {
+        databaseUsers.child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                UserReg userReg = dataSnapshot.getValue(UserReg.class);
-                System.out.println(userReg);
-                username.setText(userReg.getEmail());
-                firstname.setText(userReg.getName());
-                lastname.setText(userReg.getName());
+                firstname.setText(dataSnapshot.child("name").getValue().toString());
+                phoneno.setText(dataSnapshot.child("contanct").getValue().toString());
+                username.setText(dataSnapshot.child("email").getValue().toString());
+                lastname.setText(dataSnapshot.child("age").getValue().toString());
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                Toast.makeText(UserProfileEdit.this, "Cannot retrieve data", Toast.LENGTH_LONG).show();
+
             }
         });
+
+//        String sometext = databaseUsers.child(id).child("name").getKey();
+//        Toast.makeText(UserProfileEdit.this, sometext, Toast.LENGTH_SHORT).show();
+
 
         username.setText("test@test.com");
         firstname.setText("Testboi");
         lastname.setText("1234");
+
+        username.setInputType(0);
+        phoneno.setInputType(0);
+        firstname.setInputType(0);
+        lastname.setInputType(0);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -115,17 +129,39 @@ public class UserProfileEdit extends AppCompatActivity
                 String usernameString = username.getText().toString().trim();
                 String firstnameString = firstname.getText().toString().trim();
                 String lastnameString = lastname.getText().toString().trim();
+                String phonenoString = phoneno.getText().toString().trim();
 
-                // check and update database
+                if(usernameString!=""&&firstnameString!=""&&lastnameString!=""){
+
+                    // check and update database
+                    try {
+                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        String id = firebaseUser.getUid();
+                        databaseUsers.child(id).child("name").setValue(firstnameString);
+                        databaseUsers.child(id).child("contanct").setValue(phonenoString);
+                        databaseUsers.child(id).child("age").setValue(lastnameString);
+                        databaseUsers.child(id).child("email").setValue(usernameString);
+                    } catch (Exception e) {
+                        Toast.makeText(UserProfileEdit.this, "Unable to update", Toast.LENGTH_LONG).show();
+                        //                    e.printStackTrace();
+                    }
 
 
-                username.setInputType(0);
-                username.setEnabled(true);
-                phoneno.setInputType(0);
-                firstname.setInputType(0);
-                lastname.setInputType(0);
-                buttonSaveChanges.setVisibility(View.INVISIBLE);
-                buttonEdit.setVisibility(View.VISIBLE);
+                    username.setInputType(0);
+                    username.setEnabled(true);
+                    phoneno.setInputType(0);
+                    firstname.setInputType(0);
+                    lastname.setInputType(0);
+                    buttonSaveChanges.setVisibility(View.INVISIBLE);
+                    buttonEdit.setVisibility(View.VISIBLE);
+
+                }
+
+                else {
+
+                    Toast.makeText(UserProfileEdit.this, "Enter valid details", Toast.LENGTH_LONG);
+
+                }
 
             }});
 

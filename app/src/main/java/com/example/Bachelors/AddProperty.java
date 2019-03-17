@@ -63,6 +63,7 @@ public class AddProperty extends AppCompatActivity implements Serializable {
             public void onClick(View v) {
                 int check = upload();
                 if (check == 1) {
+                    Toast.makeText(AddProperty.this,"Details added",Toast.LENGTH_LONG).show();
                     startActivity(new Intent(AddProperty.this, Dashboard_common.class));
                 }
 
@@ -89,7 +90,7 @@ public class AddProperty extends AppCompatActivity implements Serializable {
 
             Toast.makeText(AddProperty.this, Details.getAvl_rooms(), Toast.LENGTH_LONG).show();
 
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("User");
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Property");
             String id = mUser.getUid();
             databaseReference.child(id).push().setValue(Details);
 

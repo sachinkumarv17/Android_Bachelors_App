@@ -1,9 +1,14 @@
 package com.example.Bachelors;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +24,9 @@ public class Dashboard_common extends AppCompatActivity
     DrawerLayout drawer;                    // new
     NavigationView navigationView;          // new
     Toolbar toolbar = null;                 // new
+    private static final String CHANNEL_ID = "Bach";
+    private static final String CHANNEL_NAME = "Bach";
+    private static final String CHANNEL_DESC = "Bach";
 
 
     @Override
@@ -95,41 +103,65 @@ public class Dashboard_common extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch(id) {
+        switch (id) {
 
-            case R.id.nav_add_property :
-//                Intent a = new Intent(AddProperty.this,AddProperty.class);
-//                startActivity(a);
+            case R.id.nav_add_property:
+                Intent a = new Intent(Dashboard_common.this,AddProperty.class);
+                startActivity(a);
                 break;
-            case R.id.nav_chat :
+            case R.id.nav_chat:
 //                Intent c = new Intent(Dashboard_common.this,Dashboard_common.class);
 //                startActivity(a);
                 break;
-            case R.id.nav_dashboard :
-                Intent d = new Intent(Dashboard_common.this,Dashboard_common.class);
+            case R.id.nav_dashboard:
+                Intent d = new Intent(Dashboard_common.this, Dashboard_common.class);
                 startActivity(d);
                 break;
-            case R.id.nav_notifications :
-//                Intent a = new Intent(Dashboard_common.this,Dashboard_common.class);
-//                startActivity(a);
+            case R.id.nav_notifications:
+                //Intent n = new Intent(Dashboard_common.this,Notification.class);
+                //startActivity(n);
+                displayNotif();
                 break;
-            case R.id.nav_profile :
+            case R.id.nav_profile:
                 Intent p = new Intent(this, UserProfileEdit.class);
                 startActivity(p);
                 break;
-            case R.id.nav_sign_out :
-                Intent l = new Intent(this,LoginActivity.class);
+            case R.id.nav_sign_out:
+                Intent l = new Intent(this, LoginActivity.class);
                 startActivity(l);
                 break;
-            case R.id.nav_suggestions :
+            case R.id.nav_suggestions:
 //                Intent a = new Intent(Dashboard_common.this,Dashboard_common.class);
 //                startActivity(a);
                 break;
 
         }
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setDescription(CHANNEL_DESC);
+                NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+
+
+    }
+
+    private void displayNotif() {
+            NotificationCompat.Builder notif_builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+            notif_builder.setSmallIcon(R.drawable.ic_notification);
+            notif_builder.setContentTitle("Bachelors: New notification");
+            notif_builder.setContentText("New request for Property.");
+            notif_builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+            notificationManagerCompat.notify(1, notif_builder.build());
     }
 }
+

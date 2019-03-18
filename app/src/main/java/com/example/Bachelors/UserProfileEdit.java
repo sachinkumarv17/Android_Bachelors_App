@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -57,6 +58,10 @@ public class UserProfileEdit extends AppCompatActivity
         final EditText firstname = (EditText) findViewById(R.id.editText_first_name);
         final EditText lastname = (EditText) findViewById(R.id.editText_last_name);
         final EditText phoneno = (EditText) findViewById(R.id.editText_phone_no);
+        firstname.setText(null);
+        lastname.setText(null);
+        phoneno.setText(null);
+        username.setText(null);
         firebaseAuth = FirebaseAuth.getInstance();
         mUser = firebaseAuth.getCurrentUser();
         databaseUsers = FirebaseDatabase.getInstance().getReference("User");
@@ -86,9 +91,8 @@ public class UserProfileEdit extends AppCompatActivity
 //        Toast.makeText(UserProfileEdit.this, sometext, Toast.LENGTH_SHORT).show();
 
 
-        username.setText("test@test.com");
-        firstname.setText("Testboi");
-        lastname.setText("1234");
+
+        Toast.makeText(UserProfileEdit.this,"Loading details...",Toast.LENGTH_LONG).show();
 
         username.setInputType(0);
         phoneno.setInputType(0);
@@ -137,7 +141,7 @@ public class UserProfileEdit extends AppCompatActivity
                 String lastnameString = lastname.getText().toString().trim();
                 String phonenoString = phoneno.getText().toString().trim();
 
-                if(usernameString!=""&&firstnameString!=""&&lastnameString!=""){
+                if(!(TextUtils.isEmpty(phonenoString)||TextUtils.isEmpty(lastnameString)||TextUtils.isEmpty(firstnameString))){
 
                     // check and update database
                     try {
@@ -166,7 +170,7 @@ public class UserProfileEdit extends AppCompatActivity
 
                 else {
 
-                    Toast.makeText(UserProfileEdit.this, "Enter valid details", Toast.LENGTH_LONG);
+                    Toast.makeText(UserProfileEdit.this, "Enter valid details", Toast.LENGTH_LONG).show();
 
                 }
 

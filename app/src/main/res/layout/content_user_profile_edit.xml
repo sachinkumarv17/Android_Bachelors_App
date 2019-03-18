@@ -13,12 +13,12 @@
         android:id="@+id/imageView"
         android:layout_width="92dp"
         android:layout_height="94dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/userphoto" />
+        app:srcCompat="@drawable/orange_icon" />
 
     <EditText
         android:id="@+id/editText_first_name"
@@ -43,7 +43,7 @@
         android:background="@drawable/edittext_style"
         android:editable="false"
         android:ems="10"
-        android:inputType="none"
+        android:inputType="none|number"
         android:text="Palisetti"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
@@ -133,7 +133,7 @@
         android:background="@drawable/edittext_style"
         android:editable="false"
         android:ems="10"
-        android:inputType="none"
+        android:inputType="none|phone"
         android:text="9742720059"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

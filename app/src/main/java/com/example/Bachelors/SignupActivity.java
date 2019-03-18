@@ -150,7 +150,7 @@ public class SignupActivity extends AppCompatActivity implements Serializable {
                 }
                 else
                 {
-                    Toast.makeText(SignupActivity.this,"error",Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignupActivity.this,"Error",Toast.LENGTH_LONG).show();
                 }
 
             }

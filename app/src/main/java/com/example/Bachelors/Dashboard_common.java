@@ -110,8 +110,8 @@ public class Dashboard_common extends AppCompatActivity
                 startActivity(a);
                 break;
             case R.id.nav_chat:
-//                Intent c = new Intent(Dashboard_common.this,Dashboard_common.class);
-//                startActivity(a);
+                Intent c = new Intent(Dashboard_common.this,UsersActivity.class);
+                startActivity(c);
                 break;
             case R.id.nav_dashboard:
                 Intent d = new Intent(Dashboard_common.this, Dashboard_common.class);
@@ -127,12 +127,12 @@ public class Dashboard_common extends AppCompatActivity
                 startActivity(p);
                 break;
             case R.id.nav_sign_out:
-                Intent l = new Intent(this, LoginActivity.class);
+                Intent l = new Intent(this, MainActivity.class);
                 startActivity(l);
                 break;
             case R.id.nav_suggestions:
-//                Intent a = new Intent(Dashboard_common.this,Dashboard_common.class);
-//                startActivity(a);
+                Intent sug = new Intent(this,Review.class);
+                startActivity(sug);
                 break;
 
         }

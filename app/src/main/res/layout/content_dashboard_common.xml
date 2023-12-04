@@ -1,17 +1,5 @@
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-    <!--tools:context=".Dashboard_common"-->
-    <!--tools:showIn="@layout/app_bar_dashboard_common">-->
-    <!---->
-
-<!--</android.support.constraint.ConstraintLayout>-->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -44,21 +32,24 @@
                     <ImageView
                         android:id="@+id/person_photo1"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="541dp"
                         android:baselineAligned="false"
                         android:src="@drawable/appartment1" />
 
-                    <!--<Button-->
-                        <!--android:id="@+id/cost1"-->
-                        <!--style="@style/Widget.AppCompat.Button"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="16dp"-->
-                        <!--android:background="@drawable/button_style"-->
-                        <!--android:text="2000"-->
-                        <!--android:textAppearance="@style/TextAppearance.AppCompat.Button"-->
-                        <!--android:textColor="#ffffff"-->
-                        <!--/>-->
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="128dp"
+                        android:text="Owner: Krishna\nPlace: Bangalore\nPhone No: 9245671891\nCost: 5000"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Name: Ranjana k-->
+                    <!--Place: Bangalore"/>-->
 
                 </LinearLayout>
 
@@ -77,8 +68,17 @@
                     <ImageView
                         android:id="@+id/person_photo2"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="536dp"
                         android:src="@drawable/appartment2" />
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Owner: Ankit\nPlace:Pune\nPhone No: 9671056323\nCost: 3500"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -97,8 +97,17 @@
                     <ImageView
                         android:id="@+id/person_photo3"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="532dp"
                         android:src="@drawable/appartment3" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Owner: Sanjana P\nPlace: Mangalore\nPhone No: 9482460200\nCost: 5200"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -117,8 +126,17 @@
                     <ImageView
                         android:id="@+id/person_photo4"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="532dp"
                         android:src="@drawable/appartment4" />
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Owner: Ranjana K\nPlace: Kolkata\nPhone No: 7338090713\nCost: 3499"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -138,8 +156,17 @@
                     <ImageView
                         android:id="@+id/person_photo5"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="479dp"
                         android:src="@drawable/appartment5" />
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Owner: Rahul K\nPlace: Delhi\nPhone No: 7482491733\nCost: 4100"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -148,8 +175,3 @@
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
-
-
-
-
-
